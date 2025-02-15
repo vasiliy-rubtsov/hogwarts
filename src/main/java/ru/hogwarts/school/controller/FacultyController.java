@@ -1,7 +1,9 @@
 package ru.hogwarts.school.controller;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.IFacultyService;
 
 import java.util.Collection;
@@ -16,27 +18,49 @@ public class FacultyController {
     }
 
     @PostMapping
-    public Faculty addStudent(@RequestBody Faculty student) {
+    public Faculty addFaculty(@RequestBody Faculty student) {
         return service.add(student);
     }
 
     @PutMapping
-    public Faculty updStudent(@RequestBody Faculty student) {
+    public Faculty updFaculty(@RequestBody Faculty student) {
         return service.upd(student);
     }
 
     @DeleteMapping("/{id}")
-    public Faculty removeStudent(@PathVariable("id") long id) {
-        return service.remove(id);
+    public ResponseEntity removeFaculty(@PathVariable("id") long id) {
+        service.remove(id);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{id}")
-    public Faculty findStudent(@PathVariable("id") long id) {
-        return service.find(id);
+    public ResponseEntity<Faculty> findFaculty(@PathVariable("id") long id) {
+        Faculty result = service.find(id);
+        if (result == null) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.ok(result);
+        }
     }
 
     @GetMapping
-    public Collection<Faculty> getAll() {
-        return service.getAll();
+    public ResponseEntity<Collection<Faculty>> getAll() {
+        Collection<Faculty> result = service.getAll();
+        if (result.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.ok(result);
+        }
     }
+
+    @GetMapping("/findByColor")
+    public ResponseEntity<Collection<Faculty>> findByColor(@RequestParam("color") String color) {
+        Collection<Faculty> result = service.findByColor(color);
+        if (result.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.ok(result);
+        }
+    }
+
 }
