@@ -3,6 +3,7 @@ package ru.hogwarts.school.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.FacultyRepository;
 
 import java.util.ArrayList;
@@ -47,6 +48,22 @@ public class FacultyService implements IFacultyService {
 
     @Override
     public Collection<Faculty> findByColor(String color) {
-        return repository.findByColorLike(color);
+        return repository.findByColorIgnoreCase(color);
+    }
+
+    @Override
+    public Collection<Faculty> findGlobal(String str) {
+        return repository.findGlobal(str);
+    }
+
+    @Override
+    public Collection<Student> students(Long facultyId) {
+        Optional<Faculty> faculty = repository.findById(facultyId);
+        if (faculty.isEmpty()) {
+            return null;
+        }
+
+        return faculty.get().getStudents();
     }
 }
+
