@@ -6,9 +6,9 @@ import java.util.Collection;
 
 public interface IService<T> {
 
-    T add(T faculty);
-    T upd(T faculty);
-    T remove(long id);
-    T find(long id);
+    T add(T object);
+    T upd(T object);
+    void remove(Long id);
+    T find(Long id);
     Collection<T> getAll();
 }

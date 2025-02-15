@@ -27,8 +27,9 @@ public class StudentController {
     }
 
     @DeleteMapping("/{id}")
-    public Student removeStudent(@PathVariable("id") long id) {
-        return service.remove(id);
+    public ResponseEntity removeStudent(@PathVariable("id") long id) {
+        service.remove(id);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{id}")
@@ -42,8 +43,14 @@ public class StudentController {
     }
 
     @GetMapping
-    public Collection<Student> getAll() {
-        return service.getAll();
+    public ResponseEntity<Collection<Student>> getAll() {
+        Collection<Student> result = service.getAll();
+        if (result.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.ok(result);
+        }
+
     }
 
     @GetMapping("/findByAge")
