@@ -63,4 +63,24 @@ public class FacultyController {
         }
     }
 
+    @GetMapping("/findGlobal")
+    public ResponseEntity<Collection<Faculty>> findGlobal(@RequestParam String str) {
+        Collection<Faculty> result = service.findGlobal(str);
+        if (result.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.ok(result);
+        }
+    }
+
+    @GetMapping("{id}/students")
+    public ResponseEntity<Collection<Student>> students(@PathVariable("id") Long id) {
+        Collection<Student> result = service.students(id);
+        if (result.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.ok(result);
+        }
+    }
+
 }
