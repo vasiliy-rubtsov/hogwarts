@@ -9,8 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import ru.hogwarts.school.model.Faculty;
-import ru.hogwarts.school.model.Student;
 
 import java.util.*;
 
@@ -46,7 +49,7 @@ public class FacultyControllerV1Test {
      */
     @Test
     @Order(2)
-    public void addFaculty() {
+    public void addFacultyTest() {
         Faculty object = new Faculty("Тестовый факультет", "Фиолетовый");
         Faculty response = testRestTemplate.postForObject("http://localhost:" + port + "/faculty", object, Faculty.class);
         id = response.getId();
@@ -58,7 +61,7 @@ public class FacultyControllerV1Test {
      */
     @Test
     @Order(3)
-    public void getAllFaculty() {
+    public void getAllFacultyTest() {
         Collection<Faculty> response = testRestTemplate.getForObject("http://localhost:" + port + "/faculty", Collection.class);
         Assertions.assertThat(response).isNotNull();
     }
@@ -68,7 +71,7 @@ public class FacultyControllerV1Test {
      */
     @Test
     @Order(4)
-    public void getFaculty() {
+    public void getFacultyTest() {
         Faculty response = testRestTemplate.getForObject("http://localhost:" + port + "/faculty/" + id, Faculty.class);
         Assertions.assertThat(response.getName()).isEqualTo("Тестовый факультет");
     }
@@ -78,7 +81,7 @@ public class FacultyControllerV1Test {
      */
     @Test
     @Order(5)
-    public void findGlobal() {
+    public void findGlobalTest() {
         // Проверяем поиск по фрагменту названия
         ArrayList<LinkedHashMap<String, ?>> response = testRestTemplate.getForObject("http://localhost:" + port + "/faculty/findGlobal?str=тест", ArrayList.class);
         Assertions.assertThat(response.size()).isGreaterThan(0);
@@ -97,11 +100,38 @@ public class FacultyControllerV1Test {
      */
     @Test
     @Order(6)
-    public void findByColor() {
+    public void findByColorTest() {
         ArrayList<LinkedHashMap<String, ?>> response = testRestTemplate.getForObject("http://localhost:" + port + "/faculty/findByColor?color=Фиолетовый", ArrayList.class);
         Assertions.assertThat(response.size()).isGreaterThan(0);
         LinkedHashMap<String, ?> firstElement = response.get(0);
         Assertions.assertThat(firstElement.get("name")).isEqualTo("Тестовый факультет");
+    }
+
+    /**
+     * Обновление факультета
+     */
+    @Test
+    @Order(7)
+    public void updateFacultyTest() {
+        Faculty faculty = new Faculty("Новый тестовый факультет", "синий");
+        faculty.setId(id);
+
+        HttpEntity<Faculty> entity = new HttpEntity<>(faculty);
+        ResponseEntity<Faculty> responseEntity = testRestTemplate.exchange("http://localhost:" + port + "/faculty", HttpMethod.PUT, entity, Faculty.class);
+
+        Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        Assertions.assertThat(responseEntity.getBody().getName()).isEqualTo("Новый тестовый факультет");
+        Assertions.assertThat(responseEntity.getBody().getName()).isEqualTo("Новый тестовый факультет");
+    }
+
+    /**
+     * удаление факультета
+     */
+    @Test
+    @Order(7)
+    public void deleteFacultyTest() {
+        ResponseEntity<Void> responseEntity =  testRestTemplate.exchange("http://localhost:" + port + "/faculty/{id}", HttpMethod.DELETE, null,  Void.class, id);
+        Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
 }
