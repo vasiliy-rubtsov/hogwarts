@@ -11,4 +11,10 @@ public interface IStudentService extends IService<Student> {
     Collection<Student> findByAgeBetween(int min, int max);
 
     Faculty faculty(Long studentId);
+
+    Integer getNumberOfStudents();
+
+    Integer getAverageAge();
+
+    Collection<Student> getLast5Students();
 }

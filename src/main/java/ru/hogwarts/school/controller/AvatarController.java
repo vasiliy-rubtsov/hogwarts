@@ -12,6 +12,7 @@ import ru.hogwarts.school.service.IAvatarService;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 
 @RestController
 public class AvatarController {
@@ -60,6 +61,16 @@ public class AvatarController {
             response.setContentType(avatar.getMediaType());
             response.setContentLength((int) avatar.getFileSize());
             bis.transferTo(bos);
+        }
+    }
+
+    @GetMapping("/avatar")
+    public ResponseEntity<Collection<Avatar>> findAll(@RequestParam("page") Integer pageNumber, @RequestParam("size") Integer pageSize) {
+        Collection<Avatar> result = avatarService.findAll(pageNumber, pageSize);
+        if (result == null) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.ok(result);
         }
     }
 

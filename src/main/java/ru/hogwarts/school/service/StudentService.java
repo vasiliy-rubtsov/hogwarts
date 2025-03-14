@@ -6,10 +6,7 @@ import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class StudentService implements IStudentService {
@@ -63,5 +60,20 @@ public class StudentService implements IStudentService {
         }
 
         return student.get().getFaculty();
+    }
+
+    @Override
+    public Integer getNumberOfStudents() {
+        return this.repository.getNumberOfStudents();
+    }
+
+    @Override
+    public Integer getAverageAge() {
+        return this.repository.getAverageAge();
+    }
+
+    @Override
+    public Collection<Student> getLast5Students() {
+        return this.repository.getLast5Students();
     }
 }
