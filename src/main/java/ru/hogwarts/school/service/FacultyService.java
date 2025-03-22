@@ -1,5 +1,6 @@
 package ru.hogwarts.school.service;
 
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Faculty;
@@ -15,24 +16,29 @@ import java.util.Optional;
 public class FacultyService implements IFacultyService {
 
     private final FacultyRepository repository;
+    private Logger logger;
 
-    public FacultyService(FacultyRepository repository) {
+    public FacultyService(FacultyRepository repository, Logger logger) {
         this.repository = repository;
+        this.logger = logger;
     }
 
     @Override
     public Faculty add(Faculty faculty) {
+        logger.info("Was invoked method for create faculty {}", faculty);
         faculty.setId(null);
         return repository.save(faculty);
     }
 
     @Override
     public Faculty upd(Faculty faculty) {
+        logger.info("Was invoked method for update faculty with ID = {}. New values: {}", faculty.getId(), faculty);
         return repository.save(faculty);
     }
 
     @Override
     public void remove(Long id) {
+        logger.warn("Was invoked method for delete faculty with ID = {}", id);
         repository.deleteById(id);
     }
 

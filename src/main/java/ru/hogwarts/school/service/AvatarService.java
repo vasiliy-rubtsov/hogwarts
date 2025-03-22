@@ -1,6 +1,7 @@
 package ru.hogwarts.school.service;
 
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -27,14 +28,16 @@ import static java.nio.file.StandardOpenOption.CREATE_NEW;
 public class AvatarService implements IAvatarService{
     private AvatarRepository avatarRepository;
     private StudentRepository studentRepository;
+    private Logger logger;
 
     @Value("${path.to.avatars.folder}")
     private String fileDir;
 
 
-    public AvatarService(AvatarRepository avatarRepository, StudentRepository studentRepository) {
+    public AvatarService(AvatarRepository avatarRepository, StudentRepository studentRepository, Logger logger) {
         this.avatarRepository = avatarRepository;
         this.studentRepository = studentRepository;
+        this.logger = logger;
     }
 
     private String getExtension(String fileName) {
@@ -48,8 +51,10 @@ public class AvatarService implements IAvatarService{
 
     @Override
     public void uploadAvatar(Long studentId, MultipartFile avatarFile) throws IOException {
+        logger.info("Was invoked method for upload avatar for student wjjth ID = {}", studentId);
         Student student = studentRepository.findById(studentId).orElse(null);
         if (student == null) {
+            logger.error("There is not student with ID = {}", studentId);
             throw new IOException("Не найден студент c ID = " + studentId);
         }
         String extension = getExtension(avatarFile.getOriginalFilename());
