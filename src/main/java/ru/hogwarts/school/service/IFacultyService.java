@@ -9,4 +9,6 @@ public interface IFacultyService extends IService<Faculty> {
     Collection<Faculty> findByColor(String color);
     Collection<Faculty> findGlobal(String str);
     Collection<Student> students(Long facultyId);
+    String getLongestName();
+    Integer getSumm(Integer variant);
 }
