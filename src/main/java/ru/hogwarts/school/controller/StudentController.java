@@ -113,4 +113,25 @@ public class StudentController {
             return ResponseEntity.ok(result);
         }
     }
+
+    /**
+     * Список имен всех студентов, чье имя начинается с буквы litera
+     */
+    @GetMapping("/students-names-with/{litera}")
+    public ResponseEntity<List<String>> getStudentNamesStartingWithLitera(@PathVariable("litera") String litera) {
+        List<String> result = service.getStudentNamesStartingWithLitera(litera);
+        if (result.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.ok(result);
+        }
+    }
+
+    /**
+     * Средний возраст студентов - альтернативная реализация
+     */
+    @GetMapping("/average-age-v2")
+    public ResponseEntity<Integer> getAverageAgeV2() {
+        return ResponseEntity.ok(service.getAverageAgeV2());
+    }
 }

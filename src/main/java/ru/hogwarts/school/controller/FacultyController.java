@@ -83,4 +83,23 @@ public class FacultyController {
         }
     }
 
+    /**
+     *  Самое длинное название факультета
+     */
+    @GetMapping("/longest-name")
+    public ResponseEntity<String> getLongestName() {
+        String result = service.getLongestName();
+        if (result.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.ok(result);
+        }
+    }
+
+    @GetMapping("/summ/{variant}")
+    public ResponseEntity<Integer> getSumm(@PathVariable("variant") Integer variant) {
+        Integer result = service.getSumm(variant);
+        return ResponseEntity.ok(result);
+    }
+
 }
