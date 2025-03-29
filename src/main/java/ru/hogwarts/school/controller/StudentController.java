@@ -134,4 +134,17 @@ public class StudentController {
     public ResponseEntity<Integer> getAverageAgeV2() {
         return ResponseEntity.ok(service.getAverageAgeV2());
     }
+
+    @GetMapping("/print-parallel")
+    public ResponseEntity<Void> printParallel() {
+        service.printParallel();
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/print-synchronized")
+    public ResponseEntity<Void> printSynchronized() {
+        service.printSynchronized();
+        return ResponseEntity.ok().build();
+    }
+
 }

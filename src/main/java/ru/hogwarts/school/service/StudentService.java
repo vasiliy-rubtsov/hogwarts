@@ -117,4 +117,67 @@ public class StudentService implements IStudentService {
             return (int) Math.round((float) r[0] / r[1]);
         }
     }
+
+    private final Object flag = new Object();
+
+    private void printNameToConsole(List<Student> students, int threadNum) {
+        int i = 0;
+        for (Student student : students) {
+            if (++i == 7) {
+                i = 0;
+            }
+
+            boolean p = !(
+                (threadNum == 0 && i < 3)
+                || (threadNum == 1 && i >= 3 && i < 5)
+                || (threadNum == 2 && i >= 5)
+            );
+
+            if (p) {
+                continue;
+            }
+
+            System.out.println("Поток " + threadNum + ": " +  student.getName());
+        }
+    }
+
+    private void printNameToConsoleSync(List<Student> students, int threadNum) {
+        int i = 0;
+        for (Student student : students) {
+            if (++i == 7) {
+                i = 0;
+            }
+
+            boolean p = !(
+                    (threadNum == 0 && i < 3)
+                            || (threadNum == 1 && i >= 3 && i < 5)
+                            || (threadNum == 2 && i >= 5)
+            );
+
+            if (p) {
+                continue;
+            }
+            synchronized (flag) {
+                System.out.println("Поток " + threadNum + ": " +  student.getName());
+            }
+        }
+    }
+
+    @Override
+    public void printParallel() {
+        List<Student> students = repository.findAll();
+
+        printNameToConsole(students, 0);
+        new Thread(() -> printNameToConsole(students, 1)).start();
+        new Thread(() -> printNameToConsole(students, 2)).start();
+    }
+
+    @Override
+    public void printSynchronized() {
+            List<Student> students = repository.findAll();
+
+            printNameToConsoleSync(students, 0);
+            new Thread(() -> printNameToConsoleSync(students, 1)).start();
+            new Thread(() -> printNameToConsoleSync(students, 2)).start();
+        }
 }

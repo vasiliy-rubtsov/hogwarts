@@ -22,4 +22,8 @@ public interface IStudentService extends IService<Student> {
     Collection<Student> getLast5Students();
 
     List<String> getStudentNamesStartingWithLitera(String litera);
+
+    void printParallel();
+
+    void printSynchronized();
 }
