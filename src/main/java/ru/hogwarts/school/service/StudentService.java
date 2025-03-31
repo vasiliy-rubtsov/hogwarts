@@ -117,4 +117,72 @@ public class StudentService implements IStudentService {
             return (int) Math.round((float) r[0] / r[1]);
         }
     }
+
+    private final Object flag = new Object();
+
+    private void methodInThread(int threadNum, List<Student> students) {
+        try {
+            int index1;
+            int index2;
+            switch (threadNum) {
+                case 0:
+                    index1 = 0;
+                    index2 = 1;
+                    break;
+                case 1:
+                    index1 = 2;
+                    index2 = 3;
+                    break;
+                default:
+                    index1 = 4;
+                    index2 = 5;
+            }
+
+            Thread.sleep(500); // Имитируем длительность выполнения операции
+            System.out.println("Поток " + threadNum + ": " + index1 + " " + students.get(index1).getName());
+
+            Thread.sleep(500);
+            System.out.println("Поток " + threadNum + ": " + index2 + " " + students.get(index2).getName());
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    @Override
+    public void printParallel() {
+        List<Student> students = repository.findAll();
+
+        methodInThread(0, students);
+
+        new Thread(() -> {
+            methodInThread(1, students);
+        }).start();
+
+        new Thread(() -> {
+            methodInThread(2, students);
+        }).start();
+    }
+
+    @Override
+    public void printSynchronized() {
+        List<Student> students = repository.findAll();
+
+        synchronized (flag) {
+            methodInThread(0, students);
+        }
+
+        new Thread(() -> {
+            synchronized (flag) {
+                methodInThread(1, students);
+            }
+        }).start();
+
+        new Thread(() -> {
+            synchronized (flag) {
+                methodInThread(2, students);
+            }
+        }).start();
+
+    }
 }
