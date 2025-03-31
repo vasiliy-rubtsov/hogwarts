@@ -120,64 +120,69 @@ public class StudentService implements IStudentService {
 
     private final Object flag = new Object();
 
-    private void printNameToConsole(List<Student> students, int threadNum) {
-        int i = 0;
-        for (Student student : students) {
-            if (++i == 7) {
-                i = 0;
+    private void methodInThread(int threadNum, List<Student> students) {
+        try {
+            int index1;
+            int index2;
+            switch (threadNum) {
+                case 0:
+                    index1 = 0;
+                    index2 = 1;
+                    break;
+                case 1:
+                    index1 = 2;
+                    index2 = 3;
+                    break;
+                default:
+                    index1 = 4;
+                    index2 = 5;
             }
 
-            boolean p = !(
-                (threadNum == 0 && i < 3)
-                || (threadNum == 1 && i >= 3 && i < 5)
-                || (threadNum == 2 && i >= 5)
-            );
+            Thread.sleep(500); // Имитируем длительность выполнения операции
+            System.out.println("Поток " + threadNum + ": " + index1 + " " + students.get(index1).getName());
 
-            if (p) {
-                continue;
-            }
-
-            System.out.println("Поток " + threadNum + ": " +  student.getName());
+            Thread.sleep(500);
+            System.out.println("Поток " + threadNum + ": " + index2 + " " + students.get(index2).getName());
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    private void printNameToConsoleSync(List<Student> students, int threadNum) {
-        int i = 0;
-        for (Student student : students) {
-            if (++i == 7) {
-                i = 0;
-            }
-
-            boolean p = !(
-                    (threadNum == 0 && i < 3)
-                            || (threadNum == 1 && i >= 3 && i < 5)
-                            || (threadNum == 2 && i >= 5)
-            );
-
-            if (p) {
-                continue;
-            }
-            synchronized (flag) {
-                System.out.println("Поток " + threadNum + ": " +  student.getName());
-            }
-        }
-    }
 
     @Override
     public void printParallel() {
         List<Student> students = repository.findAll();
 
-        printNameToConsole(students, 0);
-        new Thread(() -> printNameToConsole(students, 1)).start();
-        new Thread(() -> printNameToConsole(students, 2)).start();
+        methodInThread(0, students);
+
+        new Thread(() -> {
+            methodInThread(1, students);
+        }).start();
+
+        new Thread(() -> {
+            methodInThread(2, students);
+        }).start();
     }
 
     @Override
     public void printSynchronized() {
-            List<Student> students = repository.findAll();
+        List<Student> students = repository.findAll();
 
-            printNameToConsoleSync(students, 0);
-            new Thread(() -> printNameToConsoleSync(students, 1)).start();
-            new Thread(() -> printNameToConsoleSync(students, 2)).start();
+        synchronized (flag) {
+            methodInThread(0, students);
         }
+
+        new Thread(() -> {
+            synchronized (flag) {
+                methodInThread(1, students);
+            }
+        }).start();
+
+        new Thread(() -> {
+            synchronized (flag) {
+                methodInThread(2, students);
+            }
+        }).start();
+
+    }
 }
